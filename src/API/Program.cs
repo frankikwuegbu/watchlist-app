@@ -1,20 +1,12 @@
-using Scalar.AspNetCore;
+using Watchlist_App.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.AddDependencies();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
-    {
-        options.Title = "Watchlist App";
-        options.HideClientButton = true;
-    });
-}
+app.UseOpenApi();
 
 app.UseHttpsRedirection();
 
