@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Watchlist_App</RootNamespace>
+    <UserSecretsId>788f67bf-f9a2-4257-807a-7e05a5c963ca</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
