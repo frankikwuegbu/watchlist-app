@@ -9,6 +9,10 @@ public static class DependencyInjection
     {
         builder.Services.AddOpenApiServices();
 
+        //controller services
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+
         //tmdb service
         builder.Services.AddHttpClient<ITmdbServices, TmdbServices>(client =>
         {

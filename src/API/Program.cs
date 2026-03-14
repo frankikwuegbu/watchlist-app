@@ -10,6 +10,6 @@ app.UseOpenApi();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "hello world");
+app.MapControllers();
 
 app.Run();
