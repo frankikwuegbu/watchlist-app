@@ -7,7 +7,7 @@ public class Watchlist
     private readonly List<Movie> _movies = [];
     public IReadOnlyCollection<Movie> Movies => _movies.AsReadOnly();
 
-    private Watchlist() { }
+    private Watchlist() { } //for EF Core
 
     public void AddMovie(Movie movie)
     {
