@@ -10,5 +10,5 @@ public class Movie
     public string Overview { get; private set; }
     public double Rating { get; private set; }
 
-    private Movie() { }
+    private Movie() { } //for EF core
 }
