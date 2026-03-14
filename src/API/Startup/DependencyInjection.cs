@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interface;
+using Application.Movies.Queries;
 using Infrastructure.Services;
+using MediatR;
 
 namespace Watchlist_App.Startup;
 
@@ -18,5 +20,10 @@ public static class DependencyInjection
         {
             client.BaseAddress = new Uri("https://api.themoviedb.org/3");
         });
+
+        //mediatr service
+        builder.Services.AddMediatR(configuration =>
+            configuration.RegisterServicesFromAssembly(typeof(GetByTitleQuery).Assembly)
+        );
     }
 }
