@@ -12,7 +12,14 @@ public static class DependencyInjection
         builder.Services.AddOpenApiServices();
 
         //controller services
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                //ignores properties that return null
+                options.JsonSerializerOptions.DefaultIgnoreCondition = 
+                System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            });
+
         builder.Services.AddEndpointsApiExplorer();
 
         //tmdb service

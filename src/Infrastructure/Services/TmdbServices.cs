@@ -2,7 +2,9 @@
 using Application.Common.Interface;
 using Application.Movies;
 using Microsoft.Extensions.Configuration;
+
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 
 namespace Infrastructure.Services;
 
@@ -25,8 +27,19 @@ public class TmdbServices : ITmdbServices
             $"3/search/multi?api_key={apiKey}&query={title}"
         );
 
-        var results = response.Results;
+        var results = response?.Results;
 
-        return results;
+        //output should only be a movie or tv show
+        var movies = new List<MoviesDto>();
+
+        foreach( var result in results)
+        {
+            if (result.MediaType != "person")
+            {
+                movies.Add(result);
+            }
+        }
+
+        return movies;
     }
 }
