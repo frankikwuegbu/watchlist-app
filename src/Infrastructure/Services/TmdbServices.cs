@@ -1,11 +1,8 @@
 ﻿using Application.Common;
 using Application.Common.Interface;
 using Application.Movies;
-using Domain.Entities;
 using Microsoft.Extensions.Configuration;
-
 using System.Net.Http.Json;
-using System.Reflection.Metadata;
 
 namespace Infrastructure.Services;
 
