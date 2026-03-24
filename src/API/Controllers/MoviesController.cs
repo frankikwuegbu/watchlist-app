@@ -17,8 +17,14 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet("title")]
-    public async Task<ActionResult<Result>> GetMoviesByTitle(string title)
+    public async Task<ActionResult<Result>> GetByTitle(string title)
     {
         return await _sender.Send(new GetByTitleQuery(title));
+    }
+
+    [HttpGet("details")]
+    public async Task<ActionResult<Result>> GetDetailsById(int id, string mediaType)
+    {
+        return await _sender.Send(new GetDetailsByIdQuery(id, mediaType));
     }
 }

@@ -31,6 +31,17 @@ public class TmdbServices : ITmdbServices
         return MoviesAndTvFromResults(results);
     }
 
+    public async Task<MovieDetailsDto> GetDetailsByIdAsync(int id, string mediaType)
+    {
+        var apiKey = _configuration["TMDB:ApiKey"];
+
+        var response = await _httpClient.GetFromJsonAsync<MovieDetailsDto>(
+            $"/3/{mediaType}/{id}?api_key={apiKey}"
+            );
+
+        return response;
+    }
+
     public static List<MoviesDto> MoviesAndTvFromResults(List<MoviesDto> results)
     {
         var moviesAndTv = new List<MoviesDto>();
