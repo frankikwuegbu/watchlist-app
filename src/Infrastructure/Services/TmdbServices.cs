@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Common.Interface;
 using Application.Movies;
+using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 
 using System.Net.Http.Json;
@@ -29,17 +30,22 @@ public class TmdbServices : ITmdbServices
 
         var results = response?.Results;
 
-        //output should only be a movie or tv show
-        var movies = new List<MoviesDto>();
+        //output should only be movies or tv shows
+        return MoviesAndTvFromResults(results);
+    }
 
-        foreach( var result in results)
+    public static List<MoviesDto> MoviesAndTvFromResults(List<MoviesDto> results)
+    {
+        var moviesAndTv = new List<MoviesDto>();
+
+        foreach (var result in results)
         {
             if (result.MediaType != "person")
             {
-                movies.Add(result);
+                moviesAndTv.Add(result);
             }
         }
 
-        return movies;
+        return moviesAndTv;
     }
 }
