@@ -52,4 +52,26 @@ public class TmdbServicesTests
         //Assert
         Assert.True(actual.Count == 2);
     }
+
+    [Fact]
+    public async Task GetDetailsById_ShouldReturnDetails_WithValidIdAndMediaType()
+    {
+        //Arrange
+        var mockHttp = new MockHttpMessageHandler();
+
+        var validID = 1;
+        var validMediaType = "movie";
+
+        mockHttp.When($"http://example.com/3/{validMediaType}/{validID}")
+            .Respond("application/json",
+                @"{""page"": 1, ""results"": [{""media_type"": ""movie""}], ""total_pages"": 1, ""total_results"": 1}");
+
+        var client = new HttpClient(mockHttp);
+
+        //Act
+        var response = await client.GetFromJsonAsync<MovieDetailsDto>($"http://example.com/3/{validMediaType}/{validID}");
+
+        //Assert
+        Assert.NotNull(response);
+    }
 }
