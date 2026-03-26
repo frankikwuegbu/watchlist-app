@@ -16,13 +16,20 @@ public class GetDetailsByIdQueryHanldQuery : IRequestHandler<GetDetailsByIdQuery
 
     public async Task<Result> Handle(GetDetailsByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await _tmdbService.GetDetailsByIdAsync(request.Id, request.MediaType);
-
-        if (result == null)
+        try
         {
-            return Result.Failure("oops! details not found!");
-        }
+            var result = await _tmdbService.GetDetailsByIdAsync(request.Id, request.MediaType);
 
-        return Result.Success("details fetched!", result);
+            if (result == null)
+            {
+                return Result.Failure("oops! details not found!");
+            }
+
+            return Result.Success("details fetched!", result);
+        }
+        catch (HttpRequestException)
+        {
+            return Result.Failure("oops! invalid query parameter(s): mediaType can only be 'movie' or 'tv'");
+        }
     }
 }
