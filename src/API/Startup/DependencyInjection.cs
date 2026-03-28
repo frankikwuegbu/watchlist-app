@@ -1,7 +1,8 @@
 ﻿using Application.Common.Interface;
 using Application.Movies.Queries;
+using Infrastructure.Persistence;
 using Infrastructure.Services;
-using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Watchlist_App.Startup;
 
@@ -32,5 +33,13 @@ public static class DependencyInjection
         builder.Services.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssembly(typeof(GetByTitleQuery).Assembly)
         );
+
+        //application dbcontext
+        builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+
+        builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        });
     }
 }
