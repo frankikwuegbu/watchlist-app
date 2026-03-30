@@ -6,7 +6,7 @@ public class Result
     public string? Message { get; set; }
     public object? Entity { get; set; }
 
-    public static Result Success(string message, object entity)
+    public static Result Success(string message, object? entity = null)
     {
         return new Result
         {

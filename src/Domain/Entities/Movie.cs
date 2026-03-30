@@ -10,5 +10,15 @@ public class Movie
     public string Overview { get; private set; }
     public double Rating { get; private set; }
 
+    public Movie(int watchlistId, int tmdbId, string releaseDate, string overview, double rating, string title)
+    {
+        WatchlistId = watchlistId;
+        TmdbId = tmdbId;
+        ReleaseDate = releaseDate;
+        Overview = overview;
+        Rating = rating;
+        Title = title;
+    }
+
     private Movie() { } //for EF core
 }
