@@ -1,5 +1,7 @@
-﻿using Application.Common.Interface;
+﻿using Application.Common;
+using Application.Common.Interface;
 using Application.Movies.Queries;
+using AutoMapper;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -41,5 +43,8 @@ public static class DependencyInjection
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
+
+        //auto mapper
+        builder.Services.AddAutoMapper(configuration => configuration.AddProfile<MappingProfile>());
     }
 }

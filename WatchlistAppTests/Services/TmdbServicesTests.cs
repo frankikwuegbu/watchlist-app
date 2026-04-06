@@ -36,9 +36,9 @@ public class TmdbServicesTests
             Page = 1,
             Results = 
                 [
-                new MoviesDto { MediaType = "movie" },
-                new MoviesDto { MediaType = "tv" },
-                new MoviesDto { MediaType = "person" }
+                new TmdbMoviesDto { MediaType = "movie" },
+                new TmdbMoviesDto { MediaType = "tv" },
+                new TmdbMoviesDto { MediaType = "person" }
                 ],
             TotalPages = 1,
             TotalResults = 1

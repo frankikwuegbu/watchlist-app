@@ -9,7 +9,7 @@ public class TmdbResponse
     public int Page { get; set; }
 
     [JsonPropertyName("results")]
-    public List<MoviesDto>? Results { get; set; }
+    public List<TmdbMoviesDto>? Results { get; set; }
 
     [JsonPropertyName("total_pages")]
     public int TotalPages { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Application.Movies;
 
-public class MoviesDto
+public class TmdbMoviesDto
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Watchlists.Command;
+using Application.Watchlists.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,5 +21,11 @@ public class WatchlistController
     public async Task<ActionResult<Result>> AddToWatchlist(AddToWatchlistCommand command)
     {
         return await _sender.Send(command);
+    }
+
+    [HttpGet("getwatchlistmovies")]
+    public async Task<ActionResult<Result>> GetWatchlistMovies()
+    {
+        return await _sender.Send(new GetWatchlistQuery());
     }
 }

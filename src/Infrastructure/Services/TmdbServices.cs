@@ -17,7 +17,7 @@ public class TmdbServices : ITmdbServices
         _configuration = configuration;
     }
 
-    public async Task<List<MoviesDto>> GetByTitleAsync(string title)
+    public async Task<List<TmdbMoviesDto>> GetByTitleAsync(string title)
     {
         var apiKey = _configuration["TMDB:ApiKey"];
 
@@ -42,9 +42,9 @@ public class TmdbServices : ITmdbServices
         return response;
     }
 
-    public static List<MoviesDto> MoviesAndTvFromResults(List<MoviesDto> results)
+    public static List<TmdbMoviesDto> MoviesAndTvFromResults(List<TmdbMoviesDto> results)
     {
-        var moviesAndTv = new List<MoviesDto>();
+        var moviesAndTv = new List<TmdbMoviesDto>();
 
         foreach (var result in results)
         {
