@@ -28,4 +28,10 @@ public class WatchlistController
     {
         return await _sender.Send(new GetWatchlistQuery());
     }
+
+    [HttpDelete("removefromwatchlist")]
+    public async Task<ActionResult<Result>> RemoveFromWatchlist(int id)
+    {
+        return await _sender.Send(new DeleteFromWatchlistQuery(Id: id));
+    }
 }

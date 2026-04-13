@@ -14,13 +14,21 @@ public class Watchlist
     }
     public void AddMovie(Movie movie)
     {
-        ArgumentNullException.ThrowIfNull(movie);
-
         if (_movies.Any(x => x.TmdbId == movie.TmdbId))
         {
             throw new InvalidOperationException($"{movie.Title} has already been added to the watchlist!");
         }
 
         _movies.Add(movie);
+    }
+
+    public void RemoveMovie(Movie movie)
+    {
+        if (!_movies.Any(x => x.TmdbId == movie.TmdbId))
+        {
+            throw new InvalidOperationException($"oops this movie does not exist in your watchlist!");
+        }
+
+        _movies.Remove(movie);
     }
 }
