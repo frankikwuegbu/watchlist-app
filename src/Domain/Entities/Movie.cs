@@ -8,9 +8,9 @@ public class Movie
     public string Title { get; private set; }
     public string ReleaseDate { get; private set; }
     public string Overview { get; private set; }
-    public double Rating { get; private set; }
+    public string Rating { get; private set; }
 
-    public Movie(int watchlistId, int tmdbId, string releaseDate, string overview, double rating, string title)
+    public Movie(int watchlistId, int tmdbId, string releaseDate, string overview, string rating, string title)
     {
         WatchlistId = watchlistId;
         TmdbId = tmdbId;

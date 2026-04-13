@@ -32,14 +32,14 @@ public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistComman
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        var movieDetails  = await _tmdbServices.GetDetailsByIdAsync(request.Id, request.MediaType);
+        var movieDetails = await _tmdbServices.GetDetailsByIdAsync(request.Id, request.MediaType);
 
         var movie = new Movie(
             watchlist.Id,
             request.Id,
             movieDetails.ReleaseDate ?? movieDetails.FirstAirDate,
             movieDetails.Overview,
-            movieDetails.VoteAverage,
+            movieDetails.VoteAverage.ToString("0.0"),
             movieDetails.OriginalName ?? movieDetails.Title
             );
 
