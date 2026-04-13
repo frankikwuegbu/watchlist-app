@@ -23,10 +23,10 @@ public class WatchlistController
         return await _sender.Send(command);
     }
 
-    [HttpGet("getwatchlistmovies")]
+    [HttpGet("getallmoviesinwatchlist")]
     public async Task<ActionResult<Result>> GetWatchlistMovies()
     {
-        return await _sender.Send(new GetWatchlistQuery());
+        return await _sender.Send(new GetAllMoviesInWatchlistQuery());
     }
 
     [HttpDelete("removefromwatchlist")]
