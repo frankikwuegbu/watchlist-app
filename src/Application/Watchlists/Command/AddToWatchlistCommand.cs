@@ -34,6 +34,11 @@ public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistComman
 
         var movieDetails = await _tmdbServices.GetDetailsByIdAsync(request.Id, request.MediaType);
 
+        if (movieDetails is null)
+        {
+            return Result.Failure("oops! movie details not found. Cannot add to watchlist");
+        }
+
         var movie = new Movie(
             watchlist.Id,
             request.Id,
