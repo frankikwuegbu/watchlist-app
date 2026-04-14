@@ -64,6 +64,9 @@ public class MovieDetailsDto
     [JsonPropertyName("release_date")]
     public string? ReleaseDate { get; set; }
 
+    [JsonPropertyName("media_type")]
+    public string? MediaType { get; set; }
+
     public class Genre
     {
         [JsonPropertyName("id")]

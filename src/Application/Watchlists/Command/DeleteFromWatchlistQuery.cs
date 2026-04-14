@@ -9,17 +9,17 @@ namespace Application.Watchlists.Command
 
     public class DeleteFromWatchlistQueryHandler : IRequestHandler<DeleteFromWatchlistQuery, Result>
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IApplicationDbContext _context;
 
-        public DeleteFromWatchlistQueryHandler(IApplicationDbContext dbContext)
+        public DeleteFromWatchlistQueryHandler(IApplicationDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
 
         public async Task<Result> Handle(DeleteFromWatchlistQuery request, CancellationToken cancellationToken)
         {
             //get watchlist
-            var watchlist = await _dbContext.Watchlist.Include(x => x.Movies).FirstOrDefaultAsync(cancellationToken);
+            var watchlist = await _context.Watchlist.Include(x => x.Movies).FirstOrDefaultAsync(cancellationToken);
 
             if (watchlist == null)
             {
@@ -43,7 +43,7 @@ namespace Application.Watchlists.Command
                 return Result.Failure(e.Message);
             }
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success($"{movie.Title} has been removed from your watchlist");
         }

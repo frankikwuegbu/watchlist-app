@@ -34,7 +34,11 @@ public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistComman
 
         var movieDetails = await _tmdbServices.GetDetailsByIdAsync(request.Id, request.MediaType);
 
-        if (movieDetails is null)
+        //get media type from simple movie details
+        var movieList = await _tmdbServices.GetByTitleAsync(movieDetails.Title ?? movieDetails.OriginalName);
+        var specificMovie = movieList.FirstOrDefault(x => x.Id == request.Id);
+
+        if (movieDetails is null || specificMovie is null)
         {
             return Result.Failure("oops! movie details not found. Cannot add to watchlist");
         }
@@ -45,7 +49,8 @@ public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistComman
             movieDetails.ReleaseDate ?? movieDetails.FirstAirDate,
             movieDetails.Overview,
             movieDetails.VoteAverage.ToString("0.0"),
-            movieDetails.OriginalName ?? movieDetails.Title
+            movieDetails.OriginalName ?? movieDetails.Title,
+            specificMovie.MediaType
             );
 
         try
