@@ -16,10 +16,10 @@ public class MoviesController : ControllerBase
         _sender = sender;
     }
 
-    [HttpGet("title")]
-    public async Task<ActionResult<Result>> GetByTitle(string title)
+    [HttpGet("title/skip/{skip}/take/{take}")]
+    public async Task<ActionResult<Result>> GetByTitle(string title, int skip, int take)
     {
-        return await _sender.Send(new GetByTitleQuery(title));
+        return await _sender.Send(new GetByTitleQuery(title, skip, take));
     }
 
     [HttpGet("details")]

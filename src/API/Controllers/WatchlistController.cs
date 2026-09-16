@@ -17,16 +17,16 @@ public class WatchlistController
         _sender = sender;
     }
 
-    [HttpGet("getallmoviesinwatchlist")]
-    public async Task<ActionResult<Result>> GetWatchlistMovies()
+    [HttpGet("getallmoviesinwatchlist/skip/{skip}/take/{take}")]
+    public async Task<ActionResult<Result>> GetWatchlistMovies(int skip, int take)
     {
-        return await _sender.Send(new GetAllMoviesInWatchlistQuery());
+        return await _sender.Send(new GetAllMoviesInWatchlistQuery(Skip: skip, Take: take));
     }
 
-    [HttpGet("getbymediatype")]
-    public async Task<ActionResult<Result>> GetByMediaType(string mediaType)
+    [HttpGet("getbymediatype/skip/{skip}/take/{take}")]
+    public async Task<ActionResult<Result>> GetByMediaType(string mediaType, int skip, int take)
     {
-        return await _sender.Send(new GetWatchlistByMediaTypeQuery(MediaType: mediaType));
+        return await _sender.Send(new GetWatchlistByMediaTypeQuery(MediaType: mediaType, Skip: skip, Take: take));
     }
 
     [HttpPost("addtowatchlist")]

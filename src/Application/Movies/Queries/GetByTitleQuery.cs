@@ -4,7 +4,10 @@ using MediatR;
 
 namespace Application.Movies.Queries;
 
-public record GetByTitleQuery(string Title) : IRequest<Result>;
+public record GetByTitleQuery(
+    string Title,
+    int Skip,
+    int Take) : IRequest<Result>;
 
 public class GetByTitleQueryHandler : IRequestHandler<GetByTitleQuery, Result>
 {
@@ -24,6 +27,7 @@ public class GetByTitleQueryHandler : IRequestHandler<GetByTitleQuery, Result>
             return Result.Failure("Movie or series not found!");
         }
 
-        return Result.Success("Found!", result);
+        var resultList = result.Skip(request.Skip).Take(request.Take).ToList();
+        return Result.Success("Found!", resultList);
     }
 }

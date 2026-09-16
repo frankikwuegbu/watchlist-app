@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Watchlists.Queries;
 
-public record GetWatchlistByMediaTypeQuery(string MediaType) : IRequest<Result>;
+public record GetWatchlistByMediaTypeQuery(
+    string MediaType,
+    int Skip,
+    int Take) : IRequest<Result>;
 
 public class GetWatchlistByMediaTypeQueryHandler : IRequestHandler<GetWatchlistByMediaTypeQuery, Result>
 {
@@ -34,7 +37,8 @@ public class GetWatchlistByMediaTypeQueryHandler : IRequestHandler<GetWatchlistB
         }
 
         //filter by media type
-        var movies = watchlist.Movies.Where(x => x.MediaType == request.MediaType).ToList();
+        var movies = watchlist.Movies.Where(x => x.MediaType == request.MediaType)
+            .Skip(request.Skip).Take(request.Take).ToList();
         var moviesDto = _mapper.Map<List<MoviesDto>>(movies);
 
         return Result.Success($"{request.MediaType}", moviesDto);
