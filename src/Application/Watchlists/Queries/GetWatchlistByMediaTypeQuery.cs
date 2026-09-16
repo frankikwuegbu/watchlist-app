@@ -29,7 +29,8 @@ public class GetWatchlistByMediaTypeQueryHandler : IRequestHandler<GetWatchlistB
             return Result.Failure("oops! media type can only be 'movie' or 'tv'");
         }
         //check for watchlist
-        var watchlist = await _context.Watchlist.Include(x => x.Movies).FirstOrDefaultAsync(cancellationToken);
+        var watchlist = await _context.Watchlist.Include(x => x.Movies).AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (watchlist is null)
         {
