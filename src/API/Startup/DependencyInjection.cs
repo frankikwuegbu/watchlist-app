@@ -31,6 +31,9 @@ public static class DependencyInjection
             client.BaseAddress = new Uri("https://api.themoviedb.org/3");
         });
 
+        //watchlist services
+        builder.Services.AddScoped<IWatchlistServices, WatchlistServices>();
+
         //mediatr service
         builder.Services.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssembly(typeof(GetByTitleQuery).Assembly)

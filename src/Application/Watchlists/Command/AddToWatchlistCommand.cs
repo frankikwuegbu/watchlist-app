@@ -1,22 +1,26 @@
 ﻿using Application.Common;
 using Application.Common.Interface;
+using Application.Movies;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Application.Watchlists.Command;
 
-public record AddToWatchlistCommand(int Id, string MediaType = "movie or tv") : IRequest<Result>;
+public record AddToWatchlistCommand(int TmdbId, string MediaType = "movie or tv") : IRequest<Result>;
 
 public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistCommand, Result>
 {
     private readonly ITmdbServices _tmdbServices;
     private readonly IApplicationDbContext _context;
+    private readonly IWatchlistServices _watchlistServices;
 
-    public AddToWatchlistCommandHandler(ITmdbServices tmdbServices, IApplicationDbContext context)
+    public AddToWatchlistCommandHandler(ITmdbServices tmdbServices, IApplicationDbContext context, IWatchlistServices watchlistServices)
     {
         _tmdbServices = tmdbServices;
         _context = context;
+        _watchlistServices = watchlistServices;
     }
 
     public async Task<Result> Handle(AddToWatchlistCommand request, CancellationToken cancellationToken)
@@ -32,25 +36,24 @@ public class AddToWatchlistCommandHandler : IRequestHandler<AddToWatchlistComman
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        var movieDetails = await _tmdbServices.GetDetailsByIdAsync(request.Id, request.MediaType);
+        var cachedDetails = await _context.CachedMedia
+            .FirstOrDefaultAsync(x => x.TmdbId == request.TmdbId && x.MediaType == request.MediaType, cancellationToken);
 
-        //get media type from simple movie details
-        var movieList = await _tmdbServices.GetByTitleAsync(movieDetails.Title ?? movieDetails.OriginalName);
-        var specificMovie = movieList.FirstOrDefault(x => x.Id == request.Id);
-
-        if (movieDetails is null || specificMovie is null)
+        if (cachedDetails is null)
         {
             return Result.Failure("oops! movie details not found. Cannot add to watchlist");
         }
 
+        var movieDetails = JsonSerializer.Deserialize<MovieDetailsDto>(cachedDetails.JsonDetails);
+
         var movie = new Movie(
             watchlist.Id,
-            request.Id,
+            request.TmdbId,
             movieDetails.ReleaseDate ?? movieDetails.FirstAirDate,
             movieDetails.Overview,
             movieDetails.VoteAverage.ToString("0.0"),
             movieDetails.OriginalName ?? movieDetails.Title,
-            specificMovie.MediaType
+            movieDetails.MediaType
             );
 
         try

@@ -8,6 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Movie> Movies => Set<Movie>();
     public DbSet<Watchlist> Watchlist => Set<Watchlist>();
+    public DbSet<CachedMedia> CachedMedia => Set<CachedMedia>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
