@@ -31,15 +31,24 @@ public class TmdbServices : ITmdbServices
         return MoviesAndTvFromResults(results);
     }
 
-    public async Task<MovieDetailsDto> GetDetailsByIdAsync(int id, string mediaType)
+    public async Task<Result> GetDetailsByIdAsync(int tmdbId, string mediaType)
     {
         var apiKey = _configuration["TMDB:ApiKey"];
 
         var response = await _httpClient.GetFromJsonAsync<MovieDetailsDto>(
-            $"/3/{mediaType}/{id}?api_key={apiKey}"
+            $"/3/{mediaType}/{tmdbId}?api_key={apiKey}"
             );
+        
+        if (response is null)
+        {
+            return Result.Failure("Failed to retrieve movie details.");
+        }
 
-        return response;
+        //handling some of TMDB response quirks
+        response.MediaType = mediaType;
+        response.ReleaseDate ??= response.FirstAirDate;
+
+        return Result<MovieDetailsDto>.Success("Movie details retrieved successfully.", response);
     }
 
     public static List<TmdbMoviesDto> MoviesAndTvFromResults(List<TmdbMoviesDto> results)

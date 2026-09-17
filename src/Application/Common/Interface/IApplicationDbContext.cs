@@ -7,5 +7,6 @@ public interface IApplicationDbContext
 {
     DbSet<Movie> Movies { get; }
     DbSet<Watchlist> Watchlist { get; }
+    DbSet<CachedMedia> CachedMedia { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
