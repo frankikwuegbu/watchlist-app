@@ -31,7 +31,7 @@ public class TmdbServices : ITmdbServices
         return MoviesAndTvFromResults(results);
     }
 
-    public async Task<Result> GetDetailsByIdAsync(int tmdbId, string mediaType)
+    public async Task<MovieDetailsDto> GetDetailsByIdAsync(int tmdbId, string mediaType)
     {
         var apiKey = _configuration["TMDB:ApiKey"];
 
@@ -41,14 +41,14 @@ public class TmdbServices : ITmdbServices
         
         if (response is null)
         {
-            return Result.Failure("Failed to retrieve movie details.");
+            return new MovieDetailsDto { };
         }
 
         //handling some of TMDB response quirks
         response.MediaType = mediaType;
         response.ReleaseDate ??= response.FirstAirDate;
 
-        return Result<MovieDetailsDto>.Success("Movie details retrieved successfully.", response);
+        return response;
     }
 
     public static List<TmdbMoviesDto> MoviesAndTvFromResults(List<TmdbMoviesDto> results)

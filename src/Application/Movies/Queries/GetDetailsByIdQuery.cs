@@ -1,8 +1,8 @@
 ﻿using Application.Common;
 using Application.Common.Interface;
-using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
 namespace Application.Movies.Queries;
@@ -15,12 +15,14 @@ public class GetDetailsByIdQueryHandler : IRequestHandler<GetDetailsByIdQuery, R
     private readonly ITmdbServices _tmdbService;
     private readonly IApplicationDbContext _context;
     private readonly IWatchlistServices _watchlistServices;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public GetDetailsByIdQueryHandler(ITmdbServices tmdbService, IApplicationDbContext context, IWatchlistServices watchlistServices)
+    public GetDetailsByIdQueryHandler(ITmdbServices tmdbService, IApplicationDbContext context, IWatchlistServices watchlistServices, IServiceScopeFactory scopeFactory)
     {
         _tmdbService = tmdbService;
         _context = context;
         _watchlistServices = watchlistServices;
+        _scopeFactory = scopeFactory;
     }
 
     public async Task<Result> Handle(GetDetailsByIdQuery request, CancellationToken cancellationToken)
@@ -34,8 +36,11 @@ public class GetDetailsByIdQueryHandler : IRequestHandler<GetDetailsByIdQuery, R
             if (cachedMedia is null)
             {
                 var output = await _tmdbService.GetDetailsByIdAsync(request.TmdbId, request.MediaType);
-                var cacheResult = await _watchlistServices.CacheMovieDetailsAsync(output.Entity as MovieDetailsDto, cancellationToken);
-                cachedMedia = cacheResult.Entity as CachedMedia;
+                var cacheResult = await _watchlistServices.CacheMovieDetailsAsync(output, cancellationToken);
+                cachedMedia = cacheResult;
+
+                var result =  JsonSerializer.Deserialize<object>(cachedMedia.JsonDetails);
+                return Result.Success("details fetched!", result);
             }
 
             var cachedMediaIsStale = (DateTime.UtcNow - cachedMedia.LastUpdated).TotalDays > 7;
@@ -43,20 +48,35 @@ public class GetDetailsByIdQueryHandler : IRequestHandler<GetDetailsByIdQuery, R
                 && releaseDate > cachedMedia.LastUpdated
                 && releaseDate <= DateTime.UtcNow;
 
+            //update stale cache in the background
             if (cachedMediaIsStale || releaseDateIsNowPast)
-            {
-                var output = await _tmdbService.GetDetailsByIdAsync(request.TmdbId, request.MediaType);
-                var cachedResult = await _watchlistServices.UpdatePreviouslyCachedDataAsync(output.Entity as MovieDetailsDto, cancellationToken);
-                cachedMedia = cachedResult.Entity as CachedMedia;
-            }
+                _ = Task.Run(() => UpdateCachedMediaInTheBackground(request.TmdbId, request.MediaType), CancellationToken.None);
 
-            var result = JsonSerializer.Deserialize<object>(cachedMedia.JsonDetails);
-
-            return Result.Success("details fetched!", result);
+            var cachedResult = JsonSerializer.Deserialize<object>(cachedMedia.JsonDetails);
+            return Result.Success("details fetched!", cachedResult);
         }
         catch (HttpRequestException)
         {
             return Result.Failure("oops! invalid query parameter(s): mediaType can only be 'movie' or 'tv'");
         }
+    }
+
+    private async Task UpdateCachedMediaInTheBackground(int tmdbId, string mediaType)
+    {
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var backgroundTmdbServices = scope.ServiceProvider.GetService<ITmdbServices>();
+            var backgroundWatchlistServices = scope.ServiceProvider.GetService<IWatchlistServices>();
+
+            var output = await backgroundTmdbServices.GetDetailsByIdAsync(tmdbId, mediaType);
+
+            if (output is not null)
+            {
+                await backgroundWatchlistServices.UpdatePreviouslyCachedDataAsync(output, CancellationToken.None);
+            }
+        }
+        catch { }
     }
 }

@@ -15,7 +15,7 @@ namespace Infrastructure.Services
             _context = context;
         }
 
-        public async Task<Result> CacheMovieDetailsAsync(MovieDetailsDto movieDetails, CancellationToken cancellationToken)
+        public async Task<CachedMedia> CacheMovieDetailsAsync(MovieDetailsDto movieDetails, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,15 +32,15 @@ namespace Infrastructure.Services
 
                 _context.CachedMedia.Add(cachedMedia);
                 await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success("Media details cached successfully.", cachedMedia);
+                return cachedMedia;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return Result.Failure($"An error occurred while caching the media details: {ex.Message}");
+                return new CachedMedia { };
             }
         }
 
-        public async Task<Result> UpdatePreviouslyCachedDataAsync(MovieDetailsDto movieDetails, CancellationToken cancellationToken)
+        public async Task<CachedMedia> UpdatePreviouslyCachedDataAsync(MovieDetailsDto movieDetails, CancellationToken cancellationToken)
         {
             try
             {
@@ -53,13 +53,13 @@ namespace Infrastructure.Services
 
                     _context.CachedMedia.Update(existingCache);
                     await _context.SaveChangesAsync(cancellationToken);
-                    return Result.Success("media details cached successfully", existingCache);
+                    return existingCache;
                 }
-                return Result.Failure("No previously cached media found to update.");
+                return new CachedMedia { };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return Result.Failure($"An error occurred while updating the cached media details: {ex.Message}");
+                return new CachedMedia { };
             }
         }
     }
